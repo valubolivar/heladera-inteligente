@@ -1,8 +1,4 @@
-"""
-Capa de datos y lógica de negocio del organizador de heladera.
-Persistencia en SQLite. Cada función de acá abajo es una "tool"
-que después el agente (vía MCP o directamente) va a poder invocar.
-"""
+
 
 import sqlite3
 from datetime import date, datetime
@@ -80,7 +76,7 @@ def listar_alimentos(incluir_consumidos: bool = False) -> list[dict]:
 def obtener_por_vencer(dias: int = 3) -> list[dict]:
     """
     Devuelve los alimentos no consumidos que vencen dentro de los
-    próximos `dias` días (incluye los ya vencidos).
+    próximos `dias` (incluye los ya vencidos).
     """
     hoy = date.today()
     alimentos = listar_alimentos()
@@ -101,6 +97,19 @@ def marcar_consumido(alimento_id: int) -> bool:
     actualizado = conn.total_changes > 0
     conn.close()
     return actualizado
+
+def obtener_alimentos_vencidos() -> list[dict]:
+    """Devuelve los alimentos no consumidos que ya vencieron."""
+    hoy = date.today()
+    alimentos = listar_alimentos()
+    resultado = []
+    for a in alimentos:
+        vencimiento = datetime.strptime(a["vencimiento"], "%Y-%m-%d").date()
+        if vencimiento < hoy:
+            resultado.append(a)
+    return resultado
+
+
 
 
 init_db()

@@ -1,4 +1,4 @@
-from heladera import agregar_alimento, listar_alimentos, obtener_por_vencer, marcar_consumido
+from heladera import agregar_alimento, listar_alimentos, obtener_por_vencer, marcar_consumido, obtener_alimentos_vencidos
 
 if __name__ == "__main__":
     agregar_alimento("Leche", 1, "litro", "2026-09-16")

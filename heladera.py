@@ -73,20 +73,31 @@ def listar_alimentos(incluir_consumidos: bool = False) -> list[dict]:
     return [dict(r) for r in rows]
 
 
+def _alimentos_con_dias_restantes() -> list[dict]:
+    hoy = date.today()
+    alimentos = listar_alimentos()
+    return [
+        {
+            **alimento,
+            "dias_restantes": (
+                datetime.strptime(alimento["vencimiento"], "%Y-%m-%d").date()
+                - hoy
+            ).days,
+        }
+        for alimento in alimentos
+    ]
+
+
 def obtener_por_vencer(dias: int = 3) -> list[dict]:
     """
     Devuelve los alimentos no consumidos que vencen dentro de los
     próximos `dias` (incluye los ya vencidos).
     """
-    hoy = date.today()
-    alimentos = listar_alimentos()
-    resultado = []
-    for a in alimentos:
-        vencimiento = datetime.strptime(a["vencimiento"], "%Y-%m-%d").date()
-        diferencia = (vencimiento - hoy).days
-        if diferencia <= dias:
-            resultado.append({**a, "dias_restantes": diferencia})
-    return resultado
+    return [
+        alimento
+        for alimento in _alimentos_con_dias_restantes()
+        if alimento["dias_restantes"] <= dias
+    ]
 
 
 def marcar_consumido(alimento_id: int) -> bool:
@@ -100,14 +111,11 @@ def marcar_consumido(alimento_id: int) -> bool:
 
 def obtener_alimentos_vencidos() -> list[dict]:
     """Devuelve los alimentos no consumidos que ya vencieron."""
-    hoy = date.today()
-    alimentos = listar_alimentos()
-    resultado = []
-    for a in alimentos:
-        vencimiento = datetime.strptime(a["vencimiento"], "%Y-%m-%d").date()
-        if vencimiento < hoy:
-            resultado.append(a)
-    return resultado
+    return [
+        {clave: valor for clave, valor in alimento.items() if clave != "dias_restantes"}
+        for alimento in _alimentos_con_dias_restantes()
+        if alimento["dias_restantes"] < 0
+    ]
 
 
 

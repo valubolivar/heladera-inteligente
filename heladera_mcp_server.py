@@ -1,10 +1,7 @@
-"""
-Servidor MCP local que expone las tools de la heladera
-para que el agente (Copilot en modo Agent) pueda invocarlas.
-"""
+
 
 from mcp.server.fastmcp import FastMCP
-from heladera import agregar_alimento, listar_alimentos, obtener_por_vencer, marcar_consumido
+from heladera import agregar_alimento, listar_alimentos, obtener_por_vencer, marcar_consumido, obtener_alimentos_vencidos
 
 mcp = FastMCP("heladera")
 
@@ -34,6 +31,11 @@ def tool_marcar_consumido(alimento_id: int) -> str:
     ok = marcar_consumido(alimento_id)
     return "Marcado como consumido." if ok else "No se encontró ese alimento."
 
+
+@mcp.tool()
+def tool_obtener_alimentos_vencidos() -> list[dict]:
+    """Devuelve los alimentos no consumidos que ya vencieron (fecha pasada)."""
+    return obtener_alimentos_vencidos()
 
 if __name__ == "__main__":
     mcp.run()

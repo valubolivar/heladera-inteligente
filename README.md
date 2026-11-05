@@ -84,3 +84,21 @@ El agente va a consultar primero el MCP de la heladera (qué vence antes) y desp
 - Requests (consumo de API externa)
 - TheMealDB (API pública de recetas)
 - GitHub Copilot (modo Agent)
+
+
+## Parcial 2: agente declarativo, pruebas y documentación
+
+Extensión del proyecto con un agente configurado de forma declarativa y dos dimensiones complementarias.
+
+### Agente + Skill
+- `agente_heladera.agent.md`: agente definido con frontmatter YAML (nombre, descripción, tools). Incluye la Skill `sugerir_receta_antivencimiento`, con un flujo obligatorio: alerta de vencidos → alimento no vencido con menos días restantes → búsqueda de receta real → detalle de la receta.
+- Combina el MCP local de la heladera con el MCP externo de recetas (TheMealDB).
+- Para usarlo: adjuntar `agente_heladera.agent.md` como contexto en el chat de Copilot (modo Agent).
+
+### Pruebas unitarias
+- `test_heladera.py`: 12 tests con pytest (patrón Arrange-Act-Assert) sobre una base SQLite temporal.
+- Ejecutar: `python -m pytest test_heladera.py -v`
+
+### Documentación técnica
+- Docstrings PEP 257 en todas las funciones de `heladera.py`.
+- `DOCUMENTACION.md`: decisiones de diseño y contrato de la Skill.
